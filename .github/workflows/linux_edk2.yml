@@ -9,7 +9,7 @@ on:
       - '*'
 
 env:
-  PROJECT_URL: https://github.com/pftf/RPi4
+  PROJECT_URL: https://github.com/shift/rpi4-uefi
   RPI_FIRMWARE_URL: https://github.com/raspberrypi/firmware/
   ARCH: AARCH64
   COMPILER: GCC5
@@ -65,7 +65,7 @@ jobs:
         # EDK2's 'build' command doesn't play nice with spaces in environmnent variables, so we can't move the PCDs there...
         source edk2/edksetup.sh
         for BUILD_TYPE in DEBUG RELEASE; do
-          build -a ${{ env.ARCH }} -t ${{ env.COMPILER }} -b $BUILD_TYPE -p edk2-platforms/Platform/RaspberryPi/RPi4/RPi4.dsc --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"${{ env.PROJECT_URL }}" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}" ${BUILD_FLAGS} ${DEFAULT_KEYS}
+          build -a ${{ env.ARCH }} -t ${{ env.COMPILER }} -b $BUILD_TYPE -p edk2-platforms/Platform/RaspberryPi/RPi4/RPi4.dsc --pcd gRaspberryPiTokenSpaceGuid.PcdRamLimitTo3GB=0 --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"${{ env.PROJECT_URL }}" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}" ${BUILD_FLAGS} ${DEFAULT_KEYS}
         done
         cp Build/RPi4/RELEASE_${{ env.COMPILER }}/FV/RPI_EFI.fd .
 
